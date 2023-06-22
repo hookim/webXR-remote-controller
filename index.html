@@ -5,11 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
-</head>
-<body>
-    <h3>가만히 있는 우주비행사</h3>
-    <model-viewer alt="Neil Armstrong" src="./assets/NeilArmstrong.glb" ar environment-image="./assets/moon_1k.hdr" poster="./assets/NeilArmstrong.webp" shadow-intensity="1" camera-controls touch-action="pan-y"></model-viewer>
+    <script type="module"
+  src="https://unpkg.com/@google/model-viewer@0.3.1/dist/model-viewer.js">
+</script>
 
-   <h3></h3>
+<script nomodule
+  src="https://unpkg.com/@google/model-viewer@0.3.1/dist/model-viewer-legacy.js">
+</script>
+</head>
+<body>    
+    <div>
+        <h1>simple example with ios device available</h1>
+        <model-viewer 
+            class = "viewers" 
+            alt="Neil Armstrong" 
+            src="./assets/NeilArmstrong.glb" 
+            ar 
+            environment-image="./assets/moon_1k.hdr" 
+            poster="./assets/NeilArmstrong.webp" 
+            shadow-intensity="1" 
+            camera-controls 
+            touch-action="pan-y"
+            ios-src = "./assets/Astronaut.usdz"
+            />
+    
+    </div>
+<!--     
+    <div>
+        <h1>ar-placement="wall"</h1>
+        <model-viewer 
+            class = "viewers" 
+            alt="Neil Armstrong" 
+            src="./assets/NeilArmstrong.glb" 
+            ar 
+            ar-placement = "wall"
+            environment-image="./assets/moon_1k.hdr" 
+            poster="./assets/NeilArmstrong.webp" 
+            shadow-intensity="1" 
+            camera-controls 
+            touch-action="pan-y"/>
+    </div>
+
+    <div>
+        <h1>ar-placement="wall"</h1>
+        <model-viewer 
+            class = "viewers" 
+            alt="Neil Armstrong" 
+            src="./assets/NeilArmstrong.glb" 
+            ar 
+            ar-placement = "wall"
+            environment-image="./assets/moon_1k.hdr" 
+            poster="./assets/NeilArmstrong.webp" 
+            shadow-intensity="1" 
+            camera-controls 
+            touch-action="pan-y"/>
+    </div>
+
+    <model-viewer 
+        src="./assets/NeilArmstrong.glb" 
+        ar
+        ar-scale="fixed" 
+        camera-controls 
+        touch-action="pan-y" 
+        alt="A 3D model of an astronaut" 
+        poster="./assets/NeilArmstrong.webp" 
+        skybox-image="./assets/aircraft_workshop_01_1k.hdr"
+         -->
+
 </body>
 </html>
