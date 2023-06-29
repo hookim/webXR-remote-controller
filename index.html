@@ -1,76 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
-    <script type="module"
-  src="https://unpkg.com/@google/model-viewer@0.3.1/dist/model-viewer.js">
-</script>
-
-<script nomodule
-  src="https://unpkg.com/@google/model-viewer@0.3.1/dist/model-viewer-legacy.js">
-</script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+  <script type="module" src="./myTag.js"></script>
 </head>
-<body>    
-    <div>
-        <h1>simple example with ios device available</h1>
-        <model-viewer 
-            class = "viewers" 
-            alt="Neil Armstrong" 
-            src="./assets/NeilArmstrong.glb" 
-            ar 
-            environment-image="./assets/moon_1k.hdr" 
-            poster="./assets/NeilArmstrong.webp" 
-            shadow-intensity="1" 
-            camera-controls 
-            touch-action="pan-y"
-            ios-src = "./assets/Astronaut.usdz"
-            />
+<body>
+  <div class = "header">
+    <h1 class="header__text">Model Viewer</h1>
+  </div>
+  
+  <div class = "model-viewer-container">
+    <westmoon-viewer 
+      id="duck"
+      touch-action="pan-y" 
+      auto-rotate
+      rotation-per-second="180deg"
+      src="./assets/Duck.glb"
+      alt="A 3D model of a duck"/>
+  </div>
     
-    </div>
-<!--     
-    <div>
-        <h1>ar-placement="wall"</h1>
-        <model-viewer 
-            class = "viewers" 
-            alt="Neil Armstrong" 
-            src="./assets/NeilArmstrong.glb" 
-            ar 
-            ar-placement = "wall"
-            environment-image="./assets/moon_1k.hdr" 
-            poster="./assets/NeilArmstrong.webp" 
-            shadow-intensity="1" 
-            camera-controls 
-            touch-action="pan-y"/>
-    </div>
-
-    <div>
-        <h1>ar-placement="wall"</h1>
-        <model-viewer 
-            class = "viewers" 
-            alt="Neil Armstrong" 
-            src="./assets/NeilArmstrong.glb" 
-            ar 
-            ar-placement = "wall"
-            environment-image="./assets/moon_1k.hdr" 
-            poster="./assets/NeilArmstrong.webp" 
-            shadow-intensity="1" 
-            camera-controls 
-            touch-action="pan-y"/>
-    </div>
-
-    <model-viewer 
-        src="./assets/NeilArmstrong.glb" 
-        ar
-        ar-scale="fixed" 
-        camera-controls 
-        touch-action="pan-y" 
-        alt="A 3D model of an astronaut" 
-        poster="./assets/NeilArmstrong.webp" 
-        skybox-image="./assets/aircraft_workshop_01_1k.hdr"
-         -->
+  <div class = "body">  
+    <a class="body__links" href='./basic-example.html'>Basic</a>
+    <a class="body__links" href='./reflection-example.html'>Reflection</a>
+    <a class="body__links" href='./hdr-example.html'>HDR</a>
+    <a class="body__links" href='./animation-example.html'>Animation</a>
+  </div>
 
 </body>
 </html>
