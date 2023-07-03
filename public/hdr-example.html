@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDR</title>
+    <script type="module" src="./model-viewer.min.js"></script>
+    <script type="module" src="./handler.js"></script>
+    <link rel = "stylesheet" href = "styles.css">
+</head>
+<body>
+    <div class ="header">
+        <h1 class = "header__text">HDR example</h1>
+    </div>
+    <div class = "westmoon-viewer-container">
+        <westmoon-viewer 
+            camera-controls 
+            touch-action="pan-y" 
+            id="exposure-demo" 
+            exposure="1" 
+            ar
+            alt="A 3D model of a sphere reflecting a sunrise at varying exposure" 
+            src="./assets/DamagedHelmet.gltf"/>
+    </div>
+</body>
+</html>

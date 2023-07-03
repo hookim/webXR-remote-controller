@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basict</title>
+
+    <script type="module" src="./model-viewer.min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script type="module" src="./handler.js"></script>
+    <link rel = "stylesheet" href = "./styles.css">
+</head>
+<body>    
+    <div class="header">
+        <h1 class="header__text">simple example</h1>
+    <div class="westmoon-viewer-container">
+        <westmoon-viewer 
+            class = "viewers" 
+            alt="Neil Armstrong" 
+            src="./assets/NeilArmstrong.glb" 
+            ar 
+            environment-image="./assets/moon_1k.hdr" 
+            poster="./assets/NeilArmstrong.webp" 
+            shadow-intensity="1" 
+            camera-controls
+            touch-action="pan-y"
+            ios-src = "./assets/Astronaut.usdz">
+            
+            <button class="ar-button" slot="ar-button">
+                함께 사진 촬영
+            </button>
+        
+        </model-viewer>
+    </div>
+    
+</body>
+</html>
