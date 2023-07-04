@@ -1,10 +1,13 @@
 const viewer = document.querySelector('westmoon-viewer')
 
 const socket = io()
-console.log(socket)
 
 socket.on('message', (msg)=>{
     console.log(msg)
+})
+
+socket.on('full-alert', () => {
+    window.alert('Line is busy')
 })
 
 const mouseMoveHandler = (e) => {        

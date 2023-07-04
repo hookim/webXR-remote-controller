@@ -1,34 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="./model-viewer.min.js"></script>
-  <script type="module" src="./myTag.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket AR</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src = "./websocketAR.js" type = "module"></script>
 </head>
 <body>
-  <div class = "header">
-    <h1 class="header__text">Model Viewer</h1>
-  </div>
-  
-  <div class = "westmoon-viewer-container">
-    <westmoon-viewer 
-      id="duck"
-      touch-action="pan-y" 
-      auto-rotate
-      rotation-per-second="180deg"
-      src="./assets/Duck.glb"
-      alt="A 3D model of a duck"/>
-  </div>
-    
-  <div class = "body">  
-    <a class="body__links" href='./basic-example.html'>Basic</a>
-    <a class="body__links" href='./hdr-example.html'>HDR</a>
-    <a class="body__links" href='./animation-example.html'>Animation</a>
-    <a class="body__links" href='./three-js.html'>Three JS</a>
-  </div>
+    <div id = "three-js-viewer"></div>
+    <div class = "coord">
+        range X<input type =range id = "rangeX" class = "input__coord">
+        range Y<input type =range id = "rangeY" class = "input__coord">
+        range Z<input type =range id = "rangeZ" class = "input__coord">  
+    </div>
 
 </body>
 </html>
