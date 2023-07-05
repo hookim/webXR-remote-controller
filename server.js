@@ -32,7 +32,6 @@ socketIO.on('connection', (socket) => {
     console.log(`${socket.id} user just connected`) 
     const curUsers = Object.keys(users)
     let curSocketIdx = -1
-
     // allow only two users at the same time 
     if(curUsers.length >= 2){
         socket.emit('full-alert', null)
