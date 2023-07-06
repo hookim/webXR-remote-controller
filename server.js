@@ -25,59 +25,95 @@ const idxOp = (type, num) => {
     }
 }
 
+
+const states = {
+    DEFAULT : 'default', 
+    SUCCESS : 'success', 
+    WAITING : 'waiting', 
+    REMOTE_AR_CONTROL : 'remote-ar-control',
+    TERMINATE : 'terminate'
+}
+
 app.use(express.static('public')) // the name of static folder : public
 
 io.on('connection', (socket) => {  
-
     console.log(`${socket.id} user just connected`)
+
+    // socket info init and setter
+    const sckInfo = {}
+    sckInfo.id = socket.id
+    sckInfo.state = states.DEFAULT
+    const setSckState = (newType) => { sckInfo.state = newType }
+
 
     // check the number of users in the channel 
     const curUsers = Object.keys(users)
     let curSocketIdx = -1
-    // if two users are already in the channel 
+    // if two users are already in the channel -> WAITING state
     if(curUsers.length >= 2 && !(socket.id in curUsers)){
-        socket.emit('full-alert', null)
+        setSckState(states.WAITING)
+    // if not, into the channel -> SUCCESS state
     }else{
         users[socket.id] = socket
+        setSckState(states.SUCCESS)
     }
-    // repeater
+
+
+    //////////////// * emitter part (run every seconds )* /////////////////////
     const checkAvail = setInterval(() => {
+        // console.log(sckInfo,curSocketIdx, frontOfLineIdx)
+
         const howManyNow = Object.keys(users).length
-        console.log(curSocketIdx, frontOfLineIdx)
-        if(howManyNow < 2 && (curSocketIdx === frontOfLineIdx)){
-            socket.emit('waiting', true)
-        }
-        if(howManyNow >= 2 && curSocketIdx !== -1){
-            socket.emit('waiting', false)
-        }
-    }, 1000)
-
-    socket.on('remote-ar-control', (data) => { // when socket recieves a message
-        socket.broadcast.emit('remote-ar-control', data)
-    })
-
-    socket.on('waiting', () => {
-        if(curSocketIdx < 0){
-            //if queue is full
-            if(curWaitings + 1 === MAX_CAPACITY){
-                socket.emit('terminate', null)
-            }
-            else{
-                curWaitings += 1
-                // where to put to socket id
+        switch(sckInfo.state){
+            case states.SUCCESS:
+                socket.emit(states.SUCCESS, null)
+                break;
+            case states.WAITING:
                 
-                curSocketIdx = endOfLineIdx
-                endOfLineIdx = idxOp('+', endOfLineIdx)
-                waitingQueue[curSocketIdx] = socket.id
-            }
+                if(curSocketIdx === -1){
+                    // DEFAULT -> WAITING (only once)
+                    //if queue is full... (later to be fully iplemented)
+                    if(curWaitings + 1 === MAX_CAPACITY) setSckState(states.TERMINATE)
+                    else{
+                        curWaitings++
+                        // where to put to socket id
+                        curSocketIdx = endOfLineIdx
+                        endOfLineIdx = idxOp('+', endOfLineIdx)
+                        waitingQueue[curSocketIdx] = socket.id
+                    }
+                }
+                socket.emit(states.WAITING, null)
+                break;
+            case states.TERMINATE:
         }
+        // WAITING -> SUCCESS!
+        if(howManyNow < 2 && (curSocketIdx === frontOfLineIdx)){
+            // remove from the queue 
+            if(curSocketIdx !== -1){
+                waitingQueue[curSocketIdx] = null
+                curSocketIdx = -1
+                if(--curWaitings) frontOfLineIdx = idxOp('+', frontOfLineIdx)
+                else frontOfLineIdx = 0
+            }
+            setSckState(states.SUCCESS)
+        }
+    },1000)
+
+    // * listener part
+    socket.on('remote-ar-control', (data) => {
+        if(sckInfo.state === states.SUCCESS)
+            socket.broadcast.emit('remote-ar-control', data)
     })
 
-    socket.on('join-the-channel', () => {
-        waitingQueue[curSocketIdx] = null
-        curSocketIdx = -1
-        if(--curWaitings) frontOfLineIdx = idxOp('+', frontOfLineIdx)
-        else frontOfLineIdx = 0
+    socket.on(states.WAITING, () => {
+        const howManyNow = Object.keys(users).length
+        if(howManyNow < 2){
+            // emitter will handle the dequeuing part
+            if(curSocketIdx === frontOfLineIdx || curSocketIdx === -1){
+                users[socket.id] = socket
+                setSckState(states.SUCCESS)
+            }
+        }
     })
 
     socket.on('disconnect', () => {
@@ -88,10 +124,6 @@ io.on('connection', (socket) => {
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'))
-})
-
-app.get('/waiting', (req, res) => {
-    res.sendFile(path.join(__dirname, 'waiting.html'))
 })
 
 server.listen(PORT, () => {

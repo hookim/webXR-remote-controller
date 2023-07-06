@@ -9,17 +9,21 @@ const rangeX = document.getElementById('rangeX')
 const rangeY = document.getElementById('rangeY')
 const rangeZ = document.getElementById('rangeZ')
 
-// 0 is prev 1 is current
-const isAvailable = [true, true]
+const states = {
+    DEFAULT : 'default', 
+    SUCCESS : 'success', 
+    WAITING : 'waiting', 
+    REMOTE_AR_CONTROL : 'remote-ar-control',
+    TERMINATE : 'terminate'
+}
+
+let sckState = states.DEFAULT
+
+
+// emitter part
 const checkAvail = setInterval(() => {
-    console.log(isAvailable)
-    if(!isAvailable[1]){
-        socket.emit('waiting', null);
-    }
-    if(isAvailable[1] && !isAvailable[0]){
-        window.alert('back to line!')
-        socket.emit('join-the-channel', null)
-    }
+    console.log(sckState)
+    if (sckState === states.WAITING) socket.emit(states.WAITING, null)
 }, 1000)
 
 // control from the other client!
@@ -30,38 +34,24 @@ socket.on('remote-ar-control', (data)=>{
     rangeY.value = y;
     rangeZ.value = z;
     /* 
-        control three.js with msg here!!!
+
     */
 })
 
-// alert message when 2 clients are already using the control channel
-socket.on('full-alert', () => {
-    window.alert('Line is busy : connection failed!')
-
-    alertMsg.textContent = 'Please wait...'
-    coord.style.display = "none"
-
-    isAvailable[0] = isAvailable[1]
-    isAvailable[1] = false
-})
-
 // client is waitng for the empty seat
-socket.on('waiting', (msg) => {
-    if(msg){
-        console.log('waiting DONE')
-        window.location.href = '/'
-        isAvailable[0] = isAvailable[1]
-        isAvailable[1] = true
-        coord.style.display = 'block'
-        alertMsg.textContent = ''
-    }else{
-        console.log('waiting????')
-        isAvailable[0] = isAvailable[1]
-        isAvailable[1] = false 
-    } 
-    
+socket.on(states.WAITING, () => {
+    sckState = states.WAITING
+    coord.style.display = 'none'
+    alertMsg.textContent = 'waiting for the channel to be empty...'
 })
 
+socket.on(states.SUCCESS, () => {
+    coord.style.display = 'block'
+    alertMsg.textContent = ''
+    sckState = states.SUCCES
+})
+
+//when slides moveeee
 const slideHandler = () => {     
     const data = {x : rangeX.value, y : rangeY.value, z : rangeZ.value}   
     socket.emit('remote-ar-control', JSON.stringify(data))
