@@ -106,6 +106,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on(states.WAITING, () => {
+        socket.send('disconnect')
         const howManyNow = Object.keys(users).length
         if(howManyNow < 2){
             // emitter will handle the dequeuing part
@@ -117,13 +118,22 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
+        socket.send('disconnect')
         delete users[socket.id]
         console.log(`${socket.id} disconnected!`)
+        
     })
 })
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'))
+})
+
+app.get('/admin-disconnect', (req, res) => {
+    console.log('hello?')
+    const disconnectUsrs = Object.values(users)
+    disconnectUsrs.forEach((usr) => usr.disconnect())
+    res.send('disconnection successful!').end()
 })
 
 server.listen(PORT, () => {

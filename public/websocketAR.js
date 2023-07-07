@@ -22,7 +22,6 @@ let sckState = states.DEFAULT
 
 // emitter part
 const checkAvail = setInterval(() => {
-    console.log(sckState)
     if (sckState === states.WAITING) socket.emit(states.WAITING, null)
 }, 1000)
 
@@ -43,6 +42,11 @@ socket.on(states.WAITING, () => {
     sckState = states.WAITING
     coord.style.display = 'none'
     alertMsg.textContent = 'waiting for the channel to be empty...'
+})
+
+socket.on('disconnect', () => {
+    coord.style.display = 'none'
+    alertMsg.textContent = 'DONE!'
 })
 
 socket.on(states.SUCCESS, () => {
