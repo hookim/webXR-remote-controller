@@ -7,8 +7,9 @@
 A simple implemantion of the socket channel capable of 2 users. users not on the channel have to wait in the queue to get access to it
 
 ## Implementation
-A socket can have 5 different states/event
-- default : after the first socket connection 
+A socket can have 6 different states/event
+- default : after the first socket connection, a pending state
+- init : before successful connection, initialize the data configuration for the socket-synchronization
 - success : when socket successfully enters the channel
 - waiting : when socket has to wait becasue channel is fully occupied 
 - ar-remote-control : socket is communicating 
@@ -16,11 +17,15 @@ A socket can have 5 different states/event
 
 ![socket state diagram](./public/states.png)
 
+## Updates
+18 JULY 2023
+- now a new socket is synchronized to an old socket
 
 ## How it works 
-https://www.youtube.com/watch?v=icS4_gEXGcQ
+https://youtu.be/gwIGb4QBcfc
+
+
 
 ## Further plans for update
-As of 6 July 2023
-- support for fetching data when the channel is re-estbailished
+As of 18 July 2023
 - support for multiple channels 

@@ -1,10 +1,9 @@
 import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
 
-const viewer = document.querySelector('westmoon-viewer')
-
 const socket = io()
 
 const alertMsg = document.getElementById('alert-message')
+const threeJsDiv = document.getElementById('three-js-viewer')
 const coord = document.getElementById('coord')
 
 const rangeX = document.getElementById('rangeX')
@@ -18,7 +17,7 @@ animate();
 
 function init(){
     const container = document.createElement('div');
-    document.body.appendChild(container);
+    threeJsDiv.appendChild(container);
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
@@ -40,7 +39,6 @@ function init(){
 
     document.body.appendChild(ARButton.createButton(renderer));
 	window.addEventListener('resize', onWindowResize, false);
-    console.log(scene);
 }
 
 function onWindowResize() {
@@ -58,11 +56,21 @@ function render() {
     renderer.render(scene, camera);
 }
 
+
+
+
+/* 
+
+web socket connection part 
+
+*/
+
 const states = {
     DEFAULT : 'default', 
-    SUCCESS : 'success', 
-    WAITING : 'waiting', 
+    SUCCESS : 'success',
     REMOTE_AR_CONTROL : 'remote-ar-control',
+    INIT : 'init', 
+    WAITING : 'waiting', 
     TERMINATE : 'terminate'
 }
 
@@ -70,12 +78,19 @@ let sckState = states.DEFAULT
 
 
 // emitter part
-const checkAvail = setInterval(() => {
+setInterval(() => {
     if (sckState === states.WAITING) socket.emit(states.WAITING, null)
+    if (sckState === states.INIT){
+        sckState = states.SUCCESS
+        const data = {x : rangeX.value, y : rangeY.value, z : rangeZ.value}
+        socket.emit(states.REMOTE_AR_CONTROL, JSON.stringify(data))
+    }
 }, 1000)
 
 // control from the other client!
-socket.on('remote-ar-control', (data)=>{
+socket.on(states.REMOTE_AR_CONTROL, (data)=>{
+    sckState = states.SUCCESS // this one is from INIT
+
     const {x, y, z} = JSON.parse(data)
 
     rangeX.value = x;
@@ -87,20 +102,27 @@ socket.on('remote-ar-control', (data)=>{
     cube.position.z = (rangeZ.value-50)/20 - 1;
 })
 
+socket.on(states.INIT, (data) => {
+    if(sckState === states.SUCCESS) sckState = states.INIT
+})
+
 // client is waitng for the empty seat
 socket.on(states.WAITING, () => {
     sckState = states.WAITING
     coord.style.display = 'none'
+    threeJsDiv.style.display = 'none'
     alertMsg.textContent = 'waiting for the channel to be empty...'
 })
 
 socket.on('disconnect', () => {
     coord.style.display = 'none'
+    threeJsDiv.style.display = 'none'
     alertMsg.textContent = 'DONE!'
 })
 
 socket.on(states.SUCCESS, () => {
     coord.style.display = 'block'
+    threeJsDiv.style.display = 'block'
     alertMsg.textContent = ''
     sckState = states.SUCCESS
 })
@@ -113,7 +135,7 @@ const slideHandler = () => {
     cube.position.y = (rangeY.value-50)/20;
     cube.position.z = (rangeZ.value-50)/20 - 1;
 
-    socket.emit('remote-ar-control', JSON.stringify(data))
+    socket.emit(states.REMOTE_AR_CONTROL, JSON.stringify(data))
 }
 
 //control from here locally
